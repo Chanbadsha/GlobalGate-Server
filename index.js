@@ -31,11 +31,26 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    // User Info Save
-
     const GlobalGate = client.db("GlobalGate");
     const usersInfo = GlobalGate.collection("usersInfo");
+    const allVisaInfo = GlobalGate.collection("allVisaInfo");
 
+    // Dummy Visa Save
+    // app.post("/all-visa", async (req, res) => {
+    //   const visas = req.body;
+    //   const allVisaInfos = await allVisaInfo.insertMany(visas);
+    //   const result = allVisaInfos;
+    //   res.send(result);
+    // });
+
+    // Get All Visa Info
+    app.get("/all-visa-info", async (req, res) => {
+      const VisasInfo = allVisaInfo.find();
+      const result = await VisasInfo.toArray();
+      res.send(result);
+    });
+
+    // User Info Save
     app.post("/user", async (req, res) => {
       const user = req.body;
 
