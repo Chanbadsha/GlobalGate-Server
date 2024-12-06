@@ -1,6 +1,6 @@
 const cors = require("cors");
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 const app = express();
 
@@ -29,7 +29,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const GlobalGate = client.db("GlobalGate");
     const usersInfo = GlobalGate.collection("usersInfo");
@@ -43,11 +43,36 @@ async function run() {
     //   res.send(result);
     // });
 
+    // Dummy visa dlt
+
+    // app.delete("/visa-dlt/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const filter = { _id: new ObjectId(id) };
+    //   const result = await allVisaInfo.deleteOne(filter);
+    //   res.send(result);
+    // });
+
+    // Visa Info Save
+
+    app.post("/visa-info", async (req, res) => {
+      const visaInfo = req.body;
+      console.log(visaInfo);
+      const result = await allVisaInfo.insertOne(visaInfo);
+      res.send(result);
+    });
+
     // Get All Visa Info
     app.get("/all-visa-info", async (req, res) => {
       const VisasInfo = allVisaInfo.find();
       const result = await VisasInfo.toArray();
       res.send(result);
+    });
+    // Get single Visa
+    app.get("/visa-info/:id", async (req, res) => {
+      const id = req.params.id;
+      const find = { _id: new ObjectId(id) };
+      const VisaInfo = await allVisaInfo.findOne(find);
+      res.send(VisaInfo);
     });
 
     // User Info Save
@@ -64,10 +89,10 @@ async function run() {
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
@@ -80,5 +105,5 @@ app.get("/", (req, res) => {
   res.send("Global Gate Server Is Ready");
 });
 app.listen(port, () => {
-  console.log(`Global Gate server is running on port: ${port}`);
+  // console.log(`Global Gate server is running on port: ${port}`);
 });
