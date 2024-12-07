@@ -34,6 +34,7 @@ async function run() {
     const GlobalGate = client.db("GlobalGate");
     const usersInfo = GlobalGate.collection("usersInfo");
     const allVisaInfo = GlobalGate.collection("allVisaInfo");
+    const allApplicationInfo = GlobalGate.collection("allApplicationInfo");
 
     // Dummy Visa Save
     // app.post("/all-visa", async (req, res) => {
@@ -75,7 +76,49 @@ async function run() {
       res.send(VisaInfo);
     });
 
+    // Get Latest Visa Info
+    app.get("/latest-visa", async (req, res) => {
+      const latestVisa = allVisaInfo.find().sort({ $natural: -1 }).limit(6);
+      const result = await latestVisa.toArray();
+      res.send(result);
+    });
+
+    // Get Individual Visa Info
+    app.get("/individual-visa/:email", async (req, res) => {
+      const userEmail = req.params.email;
+      const filter = { email: userEmail };
+      const individualVisa = allVisaInfo.find(filter);
+      const result = await individualVisa.toArray();
+      res.send(result);
+    });
+    // get Application Info
+    app.get("/application-info/:email", async (req, res) => {
+      const userMail = req.params.email;
+      const filter = { defaultEmail: userMail };
+      const applicationInfo = allApplicationInfo.find(filter);
+      const result = await applicationInfo.toArray();
+      res.send(result);
+    });
+
+    // application Info save
+
+    app.post("/application-info", async (req, res) => {
+      const applicationInfo = req.body;
+      console.log(applicationInfo);
+      const result = await allApplicationInfo.insertOne(applicationInfo);
+      res.send(result);
+    });
+
+    // Delete Application Info
+    app.delete("/application-info/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = allApplicationInfo.deleteOne(filter);
+      res.send(result);
+    });
+
     // User Info Save
+
     app.post("/user", async (req, res) => {
       const user = req.body;
 
