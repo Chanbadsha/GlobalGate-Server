@@ -1,5 +1,6 @@
 const cors = require("cors");
 const express = require("express");
+require("dotenv").config();
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 const app = express();
@@ -8,14 +9,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Pass
-// ;
-// GlobalGate;
-
 // MongoDB Code
 
-const uri =
-  "mongodb+srv://GlobalGate:R4dddSFh8Pr48AD1@cluster0.t47d6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.t47d6.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -114,6 +110,13 @@ async function run() {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
       const result = allApplicationInfo.deleteOne(filter);
+      res.send(result);
+    });
+    // Delete visa Info
+    app.delete("/visa-info/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = allVisaInfo.deleteOne(filter);
       res.send(result);
     });
 
